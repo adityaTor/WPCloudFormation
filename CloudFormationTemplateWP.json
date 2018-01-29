@@ -1,0 +1,66 @@
+
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "VPC with a public & private subnet, and a Ec2 instance in public subnet",
+  "Resources": {
+    "TVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties" : {
+        "CidrBlock": "172.31.0.0/16",
+        "EnableDnsSupport": true,
+        "EnableDnsHostnames": true
+      }
+    },
+
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway",
+      "DependsOn": "TVPC"
+    },
+
+    "GatewayAttachment": { 
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "DependsOn": ["TVPC","InternetGateway"],
+      "Properties": {
+        "VpcId": {"Ref": "TVPC"},
+        "InternetGatewayId": {"Ref": "InternetGateway"}
+      }
+    },
+
+    "PublicSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone": "us-east-1a",
+        "CidrBlock": "172.31.0.0/20",
+        "VpcId": {"Ref": "TVPC"},
+        "MapPublicIpOnLaunch": "true"
+      }
+    },
+
+    "PublicRouteTable": {
+      "Type" : "AWS::EC2::RouteTable",
+        "Properties" : {
+          "VpcId" : { "Ref" : "TVPC" }
+         }
+    },
+
+    "PublicRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "InternetGateway",
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "RouteTableId": {"Ref": "PublicRouteTable"},
+        "GatewayId": {"Ref": "InternetGateway"}
+      }
+    },
+
+    "SubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId": {"Ref": "PublicRouteTable"},
+        "SubnetId": {"Ref": "PublicSubnet"}
+      }
+    },
+
+  }
+}
+  
