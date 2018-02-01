@@ -46,6 +46,7 @@
 
     "PublicRouteTable": {
       "Type" : "AWS::EC2::RouteTable",
+      "DependsOn": "GatewayAttachment",
         "Properties" : {
           "VpcId" : { "Ref" : "TVPC" }
          }
@@ -53,7 +54,7 @@
 
     "PublicRoute": {
       "Type": "AWS::EC2::Route",
-      "DependsOn": "InternetGateway",
+      "DependsOn": "GatewayAttachment",
       "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
         "RouteTableId": {"Ref": "PublicRouteTable"},
@@ -63,7 +64,7 @@
 
     "SubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "DependsOn": "InternetGateway",
+      "DependsOn": "GatewayAttachment",
       "Properties" : {
         "RouteTableId": {"Ref": "PublicRouteTable"},
         "SubnetId": {"Ref": "PublicSubnet"}
@@ -105,11 +106,25 @@
     "WebServerInstance": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
-        "ImageId" : "ami-97785bed",
+        "ImageId" : "ami-2d39803a",
         "SecurityGroupIds": [{"Ref":"SecurityWebGroup"}],
         "InstanceType": "t2.small",
         "SubnetId": {"Ref":"PublicSubnet"},
-        "KeyName": {"Ref": "KeyName"}
+        "KeyName": {"Ref": "KeyName"},
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+                      "#!/bin/bash -e\n",
+                      "sudo apt-get update && sudo apt-get install -y heat-cfntools\n",
+                      "sudo apt-get -y install software-properties-common\n",
+                      "sudo apt-get install -y git\n",
+                      "sudo apt-get install -y python-pip\n",
+                      "sudo pip install --upgrade pip\n",
+                      "sudo pip install --upgrade setuptools\n",
+                      "sudo apt-get -y install libffi-dev libssl-dev\n",
+                      "sudo pip install ansible\n",
+                      "cd /tmp && git clone https://github.com/adityaTor/Wordpress-Ansible.git\n",
+                      "cd /tmp/Wordpress-Ansible && ansible-playbook playbook.yml\n",
+                      "cd /tmp/UbuntuAnsible && ansible-playbook playbook.yml\n"
+    ]]}}
       }
     }
 
