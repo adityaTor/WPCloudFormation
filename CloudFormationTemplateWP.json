@@ -1,7 +1,7 @@
 
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "VPC with a public & private subnet, and a Ec2 instance in public subnet",
+  "Description": "VPC with a public subnet, and a EC2 WordPress server instance in public subnet",
   "Parameters": {
     "KeyName": {
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
