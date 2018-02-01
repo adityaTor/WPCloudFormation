@@ -19,4 +19,13 @@ There is no CM instance because the Ansible Playbook is run locally, after insta
 
 My justification behind not using a CM instance to provision the WebServer was,  It's more cost efficient to have just 1 server running, especially for a simple Wordpress site. However, if there were many WebServer instances and they all needed to be configured, especially when using a ASG, i would definitely use a dedicated CM instance on a private subnet.
 
-I also did not use dedicated Database server, again i did not think it was nessecary for a simple wordpress site, especially if its a simple blog or static site.  
+I also did not use dedicated Database server, again i did not think it was nessecary for a simple wordpress site, especially if its a simple blog or static site. 
+
+# Resources Used
+
+1. AWS Documentation
+2. AWS forums
+3. StackOverflow
+4. Ansible Galaxy page
+5. Lots of Google
+
